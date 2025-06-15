@@ -55,6 +55,9 @@ def update_appointment_view(request, pk):
             form.save()
             messages.success(request, "Votre rendez-vous a été modifié avec succès.")
             return redirect('users:patient_dashboard')
+    else:
+        form = AppointmentCreationForm(instance=appointment)
+
 
     context = {
         'form': form,
