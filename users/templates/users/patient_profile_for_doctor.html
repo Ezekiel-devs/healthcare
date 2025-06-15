@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Profil de {{ patient.get_full_name }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Dossier Patient : {{ patient.get_full_name }}</h1>
+
+<div class="row g-4">
+    <div class="col-md-5">
+        <!-- Mise à jour du Dossier Médical -->
+        <div class="card mb-4">
+            <div class="card-header">Mettre à Jour le Dossier Médical</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ record_form|crispy }}
+                    <button type="submit" name="update_record" class="btn btn-primary mt-3 w-100">Enregistrer les modifications</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Ajouter une Ordonnance -->
+        <div class="card mb-4">
+            <div class="card-header">Ajouter une Ordonnance</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ prescription_form|crispy }}
+                    <button type="submit" name="add_prescription" class="btn btn-info mt-3 w-100">Ajouter l'ordonnance</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Ajouter un Résultat d'Analyse -->
+        <div class="card">
+            <div class="card-header">Ajouter un Résultat d'Analyse</div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ lab_result_form|crispy }}
+                    <button type="submit" name="add_lab_result" class="btn btn-info mt-3 w-100">Ajouter le résultat</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <!-- Ordonnances existantes -->
+        <div class="card mb-4">
+             <div class="card-header">Historique des Ordonnances</div>
+             <ul class="list-group list-group-flush">
+                {% for pres in prescriptions %}
+                    <li class="list-group-item">{{ pres.medication_name }} ({{ pres.dosage }}) - {{ pres.created_at|date:"d M Y" }}</li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucune ordonnance.</li>
+                {% endfor %}
+             </ul>
+        </div>
+
+        <!-- Résultats d'analyses existants -->
+        <div class="card">
+             <div class="card-header">Historique des Résultats d'Analyses</div>
+             <ul class="list-group list-group-flush">
+                {% for result in lab_results %}
+                    <li class="list-group-item">
+                        <a href="{{ result.attachment.url }}" target="_blank">{{ result.title }}</a> - {{ result.result_date|date:"d M Y" }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">Aucun résultat d'analyse.</li>
+                {% endfor %}
+             </ul>
+        </div>
+    </div>
+</div>
+<a href="{% url 'users:doctor_dashboard' %}" class="btn btn-secondary mt-4">Retour au tableau de bord</a>
+{% endblock %}

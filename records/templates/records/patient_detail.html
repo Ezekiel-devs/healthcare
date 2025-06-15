@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Dossier de {{ patient.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="mb-0">Dossier de {{ patient.get_full_name }}</h1>
+        <p class="text-muted">ID Patient : {{ patient.id }} | Inscrit le : {{ patient.date_joined|date:"d M Y" }}</p>
+    </div>
+    <a href="{% url 'users:doctor_dashboard' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Retour au tableau de bord</a>
+</div>
+
+<hr>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <ul class="nav nav-tabs mb-3" id="patientTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">Dossier & Historique</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="prescriptions-tab" data-bs-toggle="tab" data-bs-target="#prescriptions" type="button" role="tab">Ordonnances</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments" type="button" role="tab">Rendez-vous</button>
+            </li>
+        </ul>
+
+        <!-- Contenu des onglets -->
+        <div class="tab-content" id="patientTabContent">
+            <!-- Onglet Dossier Médical -->
+            <div class="tab-pane fade show active" id="history" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">Informations Générales</div>
+                    <div class="card-body">
+                        <h5>Antécédents Médicaux</h5>
+                        <p class="text-muted">{{ medical_record.medical_history|linebreaksbr|default:"Aucun antécédent." }}</p>
+                        <hr>
+                        <h5>Allergies Connues</h5>
+                        <p class="text-muted">{{ medical_record.allergies|linebreaksbr|default:"Aucune allergie connue." }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#updateRecordModal">
+                            <i class="bi bi-pencil-square me-2"></i>Mettre à jour le dossier
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet Ordonnances -->
+            <div class="tab-pane fade" id="prescriptions" role="tabpanel">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Historique des Ordonnances</span>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPrescriptionModal">
+                            <i class="bi bi-plus-circle me-1"></i>Nouvelle Ordonnance
+                        </button>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for pres in patient_prescriptions %}
+                            <li class="list-group-item">
+                                <strong>{{ pres.medication_name }}</strong> - {{ pres.dosage }}
+                                <br><small class="text-muted">Prescrit le {{ pres.created_at|date:"d M Y" }}</small>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">Aucune ordonnance enregistrée.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Onglet Rendez-vous -->
+            <div class="tab-pane fade" id="appointments" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">Historique des Rendez-vous</div>
+                    <ul class="list-group list-group-flush">
+                         {% for rdv in patient_appointments %}
+                            <li class="list-group-item">
+                                <strong>{{ rdv.appointment_date|date:"d M Y à H:i" }}</strong> - <span class="badge bg-info">{{ rdv.get_status_display }}</span>
+                                <p class="mb-0 text-muted">{{ rdv.reason }}</p>
+                            </li>
+                        {% empty %}
+                             <li class="list-group-item text-muted">Aucun rendez-vous dans l'historique.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Colonne latérale : Infos patient -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body text-center">
+                {% if patient.profile_picture %}
+                    <img src="{{ patient.profile_picture.url }}" alt="Photo de profil" class="img-thumbnail rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                {% else %}
+                    <i class="bi bi-person-circle" style="font-size: 120px; color: #ccc;"></i>
+                {% endif %}
+                <h5 class="card-title">{{ patient.get_full_name }}</h5>
+                <p class="text-muted">{{ patient.email }}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Téléphone :</strong> {{ patient.phone_number|default:"Non renseigné" }}</li>
+                <li class="list-group-item"><strong>Adresse :</strong> {{ patient.address|linebreaksbr|default:"Non renseignée" }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modale pour Ajouter une Ordonnance -->
+<div class="modal fade" id="addPrescriptionModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Nouvelle Ordonnance</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="#"> <!-- L'URL d'action pointera vers la vue de création d'ordonnance -->
+        <div class="modal-body">
+            {% csrf_token %}
+            <!-- Ici, on injecterait le formulaire de création d'ordonnance -->
+            <p>Le formulaire de création d'ordonnance (médicament, posologie, instructions) sera affiché ici.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer l'ordonnance</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- NOTE : une modale similaire serait utilisée pour mettre à jour le dossier médical -->
+
+{% endblock %}

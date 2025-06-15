@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Planning{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Mon Planning Complet</h1>
+    <a href="{% url 'users:doctor_dashboard' %}" class="btn btn-outline-secondary">Retour au tableau de bord</a>
+</div>
+
+{% if appointments_by_day %}
+
+    {% for day, appointments_in_day in appointments_by_day.items %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">{{ day|date:"l j F Y" }}</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                
+                {% for rdv in appointments_in_day %}
+                    <a href="{% url 'users:patient_profile' pk=rdv.patient.pk %}" class="list-group-item list-group-item-action">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center">
+                                <strong class="fs-5">{{ rdv.appointment_date|date:"H:i" }}</strong>
+                            </div>
+                            <div class="col-md-5">
+                                <h6 class="mb-0">{{ rdv.patient.get_full_name }}</h6>
+                            </div>
+                            <div class="col-md-5">
+                                <p class="mb-0 text-muted">{{ rdv.reason|truncatewords:15 }}</p>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+
+            </div>
+        </div>
+    {% endfor %}
+
+{% else %}
+    <div class="card">
+        <div class="card-body text-center">
+            <p class="lead text-muted">Vous n'avez aucun rendez-vous confirmé à venir.</p>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

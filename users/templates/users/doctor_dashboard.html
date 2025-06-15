@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de Bord Médecin{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Dr. {{ user.last_name }}, bienvenue.</h1>
+
+<div class="row g-4">
+     <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0"><i class="bi bi-bell-fill me-2"></i>Demandes en attente ({{ pending_appointments|length }})</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for rdv in pending_appointments %}
+                    <a href="{% url 'appointments:process' pk=rdv.pk %}" class="list-group-item list-group-item-action">
+                         <div class="d-flex w-100 justify-content-between">
+                            <div>
+                                <h6 class="mb-1">{{ rdv.patient.get_full_name }}</h6>
+                                <p class="mb-1 text-muted">
+                                    Demande pour le : <strong>{{ rdv.appointment_date|date:"d M Y à H:i" }}</strong>
+                                </p>
+                                <p class="mb-1 text-muted">
+                                    Motif : {{ rdv.reason|truncatewords:10 }}
+                                </p>
+                            </div>
+                            <div class="align-self-center">
+                                <span class="badge bg-primary">Voir détails</span>
+                            </div>
+                        </div>
+                    </a>
+                {% empty %}
+                    <div class="list-group-item text-center p-3">
+                        <p class="text-muted mb-0">Aucune nouvelle demande de rendez-vous.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-clock-fill me-2"></i>Rendez-vous confirmés du jour ({{ today_appointments|length }})</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for rdv in today_appointments %}
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ rdv.patient.get_full_name }}</h6>
+                            <span class="badge bg-dark rounded-pill">{{ rdv.appointment_date|date:"H:i" }}</span>
+                        </div>
+                        <p class="mb-1 text-muted">{{ rdv.reason }}</p>
+                    </a>
+                {% empty %}
+                    <div class="list-group-item text-center p-4">
+                        <p class="text-muted mb-0">Aucun rendez-vous confirmé pour aujourd'hui.</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'users:doctor_schedule' %}" class="btn btn-secondary">Voir le planning complet</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Accès rapide aux patients -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Mes Patients</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{% url 'users:doctor_dashboard' %}"> 
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="q" placeholder="Rechercher un patient..." value="{{ search_query }}">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <ul class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                {% for patient in my_patients %}
+                    <a href="{% url 'users:patient_profile' pk=patient.pk %}" class="list-group-item list-group-item-action">
+                        {{ patient.get_full_name }}
+                        <br>
+                        <small class="text-muted">{{ patient.email }}</small>
+                    </a>
+                {% empty %}
+                    <li class="list-group-item text-muted">
+                        {% if search_query %}
+                            Aucun patient ne correspond à votre recherche.
+                        {% else %}
+                            Vous n'avez pas encore de patients assignés.
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
