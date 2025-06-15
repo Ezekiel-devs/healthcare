@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import dj_database_url #database postgresql de heroku
 from pathlib import Path
 from dotenv import load_dotenv # for the .env file
 
@@ -31,7 +32,13 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True' # Utiliser la variable d'environnement
 
-ALLOWED_HOSTS = []
+#Local
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+#Production
+RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 
 
 # Application definition
@@ -88,11 +95,21 @@ WSGI_APPLICATION = 'healthcare.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}"""
+
+# Utilise dj-database-url pour configurer la base de données.
+# En local, il lira la variable DATABASE_URL depuis .env (sqlite)
+# Sur Heroku, Heroku définit automatiquement DATABASE_URL (postgres)
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f'sqlite:///{os.path.join(BASE_DIR, "db.sqlite3")}',
+        conn_max_age=600
+    )
 }
 
 
@@ -131,6 +148,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Django collectera les statiques ici
 # Pour utiliser les fichier statique en dehors de l'application 'core'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'core/static')]
 
@@ -159,3 +177,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # media // profile picture
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# Configuration de Whitenoise pour la production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
