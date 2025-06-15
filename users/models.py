@@ -5,7 +5,6 @@ class User(AbstractUser):
     ROLE_CHOICES = (
         ('PATIENT', 'Patient'),
         ('DOCTOR', 'Médecin'),
-        ('RECEPTIONIST', 'Réceptionniste'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, verbose_name="Rôle")
     telephone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Numéro de téléphone")

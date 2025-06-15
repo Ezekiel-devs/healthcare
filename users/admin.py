@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from .models import User
 
 class CustomUserAdmin(UserAdmin):
-    # 1. Champs à afficher dans la liste des utilisateurs
+    #Afficher
     list_display = (
         'username', 
         'email', 
@@ -13,7 +13,7 @@ class CustomUserAdmin(UserAdmin):
         'is_staff'
     )
 
-    # 2. Champs sur la page de MODIFICATION
+     #Modifier
     fieldsets = (
         *UserAdmin.fieldsets,
         (
@@ -21,7 +21,6 @@ class CustomUserAdmin(UserAdmin):
             {
                 'fields': (
                     'role',
-                    'phone_number',
                     'telephone',
                     'ville',
                     'specialty',
@@ -29,8 +28,7 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
-
-    # 3. Champs sur la page de CRÉATION  <--- C'EST ICI QU'IL FAUT CORRIGER
+        #Create
     add_fieldsets = UserAdmin.add_fieldsets + (
         (
             'Informations Personnalisées',
@@ -39,19 +37,18 @@ class CustomUserAdmin(UserAdmin):
                     'first_name',
                     'last_name',
                     'email',
-                    'role',          # Déjà là
-                    'telephone',  # ==> AJOUTER
-                    'ville',       # ==> AJOUTER
-                    'specialty',     # ==> AJOUTER
+                    'role',        
+                    'telephone',  
+                    'ville',       
+                    'specialty',     
                 ),
             },
         ),
     )
 
-    # 4. Filtres
+
     list_filter = ('role', 'is_staff', 'is_superuser', 'groups')
     
-    # 5. Recherche
     search_fields = ('username', 'first_name', 'last_name', 'email', 'telephone', 'ville')
 
 
