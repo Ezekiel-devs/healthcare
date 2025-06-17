@@ -1,7 +1,7 @@
 {% load static %}
 {% load core_tags %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,24 +20,24 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'users:dashboard-redirect' %}">Tableau de bord</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'users:dashboard-redirect' %}">Dashboard</a></li>
                         <li class="nav-item dropdown">
                           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Salut, {{ user.username }}
+                            Hello, {{ user.username }}
                           </a>
                           <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'users:profile_update' %}">Mon Profil</a></li>
+                            <li><a class="dropdown-item" href="{% url 'users:profile_update' %}">My Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form class="d-inline" action="{% url 'users:logout' %}" method="post">
                                     {% csrf_token %}
-                                    <button type="submit" class="dropdown-item">Déconnexion</button>
+                                    <button type="submit" class="dropdown-item">Logout</button>
                                 </form>
                             </li>
                           </ul>
                     {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Connexion</a></li>
-                        <li class="nav-item"><a class="btn btn-primary ms-2" href="{% url 'users:register' %}">Inscription Patient</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Login</a></li>
+                        <li class="nav-item"><a class="btn btn-primary ms-2" href="{% url 'users:register' %}">Patient Sign Up</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -59,7 +59,7 @@
 
     <footer class="bg-light text-center text-lg-start mt-auto py-3">
         <div class="text-center">
-            © {% current_year %} - Tous droits réservés.
+            © {% current_year %} - All rights reserved.
         </div>
     </footer>
 

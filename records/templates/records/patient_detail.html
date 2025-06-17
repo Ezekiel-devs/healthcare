@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Dossier de {{ patient.get_full_name }}{% endblock %}
+{% block title %}Record for {{ patient.get_full_name }}{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <h1 class="mb-0">Dossier de {{ patient.get_full_name }}</h1>
-        <p class="text-muted">ID Patient : {{ patient.id }} | Inscrit le : {{ patient.date_joined|date:"d M Y" }}</p>
+        <h1 class="mb-0">Patient Record: {{ patient.get_full_name }}</h1>
+        <p class="text-muted">Patient ID: {{ patient.id }} | Registered on: {{ patient.date_joined|date:"M d, Y" }}</p>
     </div>
-    <a href="{% url 'users:doctor_dashboard' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Retour au tableau de bord</a>
+    <a href="{% url 'users:doctor_dashboard' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Back to Dashboard</a>
 </div>
 
 <hr>
@@ -18,13 +18,13 @@
     <div class="col-lg-8">
         <ul class="nav nav-tabs mb-3" id="patientTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">Dossier & Historique</button>
+                <button class="nav-link active" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">Record & History</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="prescriptions-tab" data-bs-toggle="tab" data-bs-target="#prescriptions" type="button" role="tab">Ordonnances</button>
+                <button class="nav-link" id="prescriptions-tab" data-bs-toggle="tab" data-bs-target="#prescriptions" type="button" role="tab">Prescriptions</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments" type="button" role="tab">Rendez-vous</button>
+                <button class="nav-link" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments" type="button" role="tab">Appointments</button>
             </li>
         </ul>
 
@@ -33,17 +33,17 @@
             <!-- Onglet Dossier Médical -->
             <div class="tab-pane fade show active" id="history" role="tabpanel">
                 <div class="card">
-                    <div class="card-header">Informations Générales</div>
+                    <div class="card-header">General Information</div>
                     <div class="card-body">
-                        <h5>Antécédents Médicaux</h5>
-                        <p class="text-muted">{{ medical_record.medical_history|linebreaksbr|default:"Aucun antécédent." }}</p>
+                        <h5>Medical History</h5>
+                        <p class="text-muted">{{ medical_record.medical_history|linebreaksbr|default:"No history provided." }}</p>
                         <hr>
-                        <h5>Allergies Connues</h5>
-                        <p class="text-muted">{{ medical_record.allergies|linebreaksbr|default:"Aucune allergie connue." }}</p>
+                        <h5>Known Allergies</h5>
+                        <p class="text-muted">{{ medical_record.allergies|linebreaksbr|default:"No known allergies." }}</p>
                     </div>
                     <div class="card-footer">
                         <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#updateRecordModal">
-                            <i class="bi bi-pencil-square me-2"></i>Mettre à jour le dossier
+                            <i class="bi bi-pencil-square me-2"></i>Update Record
                         </button>
                     </div>
                 </div>
@@ -53,19 +53,19 @@
             <div class="tab-pane fade" id="prescriptions" role="tabpanel">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Historique des Ordonnances</span>
+                        <span>Prescription History</span>
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPrescriptionModal">
-                            <i class="bi bi-plus-circle me-1"></i>Nouvelle Ordonnance
+                            <i class="bi bi-plus-circle me-1"></i>New Prescription
                         </button>
                     </div>
                     <ul class="list-group list-group-flush">
                         {% for pres in patient_prescriptions %}
                             <li class="list-group-item">
                                 <strong>{{ pres.medication_name }}</strong> - {{ pres.dosage }}
-                                <br><small class="text-muted">Prescrit le {{ pres.created_at|date:"d M Y" }}</small>
+                                <br><small class="text-muted">Prescribed on {{ pres.created_at|date:"M d, Y" }}</small>
                             </li>
                         {% empty %}
-                            <li class="list-group-item text-muted">Aucune ordonnance enregistrée.</li>
+                            <li class="list-group-item text-muted">No prescriptions recorded.</li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -74,15 +74,15 @@
             <!-- Onglet Rendez-vous -->
             <div class="tab-pane fade" id="appointments" role="tabpanel">
                 <div class="card">
-                    <div class="card-header">Historique des Rendez-vous</div>
+                    <div class="card-header">Appointment History</div>
                     <ul class="list-group list-group-flush">
                          {% for rdv in patient_appointments %}
                             <li class="list-group-item">
-                                <strong>{{ rdv.appointment_date|date:"d M Y à H:i" }}</strong> - <span class="badge bg-info">{{ rdv.get_status_display }}</span>
+                                <strong>{{ rdv.appointment_date|date:"M d, Y \a\t H:i" }}</strong> - <span class="badge bg-info">{{ rdv.get_status_display }}</span>
                                 <p class="mb-0 text-muted">{{ rdv.reason }}</p>
                             </li>
                         {% empty %}
-                             <li class="list-group-item text-muted">Aucun rendez-vous dans l'historique.</li>
+                             <li class="list-group-item text-muted">No appointments in history.</li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -95,7 +95,7 @@
         <div class="card">
             <div class="card-body text-center">
                 {% if patient.profile_picture %}
-                    <img src="{{ patient.profile_picture.url }}" alt="Photo de profil" class="img-thumbnail rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                    <img src="{{ patient.profile_picture.url }}" alt="Profile picture" class="img-thumbnail rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
                 {% else %}
                     <i class="bi bi-person-circle" style="font-size: 120px; color: #ccc;"></i>
                 {% endif %}
@@ -103,8 +103,8 @@
                 <p class="text-muted">{{ patient.email }}</p>
             </div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item"><strong>Téléphone :</strong> {{ patient.phone_number|default:"Non renseigné" }}</li>
-                <li class="list-group-item"><strong>Adresse :</strong> {{ patient.address|linebreaksbr|default:"Non renseignée" }}</li>
+                <li class="list-group-item"><strong>Phone:</strong> {{ patient.phone_number|default:"Not provided" }}</li>
+                <li class="list-group-item"><strong>Address:</strong> {{ patient.address|linebreaksbr|default:"Not provided" }}</li>
             </ul>
         </div>
     </div>
@@ -116,18 +116,18 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Nouvelle Ordonnance</h5>
+        <h5 class="modal-title">New Prescription</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form method="post" action="#"> <!-- L'URL d'action pointera vers la vue de création d'ordonnance -->
         <div class="modal-body">
             {% csrf_token %}
             <!-- Ici, on injecterait le formulaire de création d'ordonnance -->
-            <p>Le formulaire de création d'ordonnance (médicament, posologie, instructions) sera affiché ici.</p>
+            <p>The prescription creation form (medication, dosage, instructions) will be displayed here.</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="submit" class="btn btn-primary">Enregistrer l'ordonnance</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Prescription</button>
         </div>
       </form>
     </div>

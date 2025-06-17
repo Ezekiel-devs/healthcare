@@ -28,16 +28,16 @@ def create_appointment_view(request):
             appointment.status = 'PENDING' # statut par défaut
             appointment.save() # sauvegarde
             
-            messages.success(request, f"Votre demande de rendez-vous avec Dr. {appointment.doctor.last_name} a bien été enregistrée. Vous recevrez une notification après confirmation.")
+            messages.success(request, f"Your appointment request with Dr. {appointment.doctor.last_name} has been successfully submitted. You will receive a notification after confirmation.")
             return redirect('users:patient_dashboard')
         else:
-            messages.error(request, "Veuillez corriger les erreurs dans le formulaire.")
+            messages.error(request, "Please correct any errors in the form.")
     else:
         form = AppointmentCreationForm()
         
     context = {
         'form': form,
-        'page_title': 'Prendre un rendez-vous'
+        'page_title': 'Take an appointment'
     }
     return render(request, 'appointments/appointment_form.html', context)
 
@@ -46,14 +46,14 @@ def create_appointment_view(request):
 def update_appointment_view(request, pk):
     appointment = get_object_or_404(Appointment, pk=pk, patient=request.user)# Recupère le rdv du patient connecté
     if appointment.status != 'PENDING':
-        messages.error(request, "Ce rendez-vous ne peut plus être modifié car il a déjà été traité.")
+        messages.error(request, "This appointment can no longer be modified because it has already been processed.")
         return redirect('users:patient_dashboard')
     if request.method == 'POST':
         # On passe 'instance=appointment' pour dire au formulaire qu'on modifie un objet existant
         form = AppointmentCreationForm(request.POST, instance=appointment)
         if form.is_valid():
             form.save()
-            messages.success(request, "Votre rendez-vous a été modifié avec succès.")
+            messages.success(request, "Your appointment has been successfully changed.")
             return redirect('users:patient_dashboard')
     else:
         form = AppointmentCreationForm(instance=appointment)
@@ -61,7 +61,7 @@ def update_appointment_view(request, pk):
 
     context = {
         'form': form,
-        'page_title': 'Modifier mon rendez-vous'
+        'page_title': 'Change my appointment'
     }
     return render(request, 'appointments/appointment_form.html', context)
 
@@ -69,16 +69,16 @@ def update_appointment_view(request, pk):
 ###########     DELETE        #################
 def delete_appointment_view(request, pk):
     if request.method != 'POST':
-        return HttpResponseForbidden("Méthode non autorisée.")
+        return HttpResponseForbidden("Method not permitted.")
     
     appointment = get_object_or_404(Appointment, pk=pk, patient=request.user)
 
     if appointment.status != 'PENDING':
-        messages.error(request, "Ce rendez-vous ne peut plus être annulé car il a déjà été traité.")
+        messages.error(request, "This appointment can no longer be cancelled as it has already been processed.")
         return redirect('users:patient_dashboard')
     appointment.delete()
     
-    messages.success(request, "Le rendez-vous a été annulé avec succès.")
+    messages.success(request, "The appointment has been successfully cancelled.")
     return redirect('users:patient_dashboard')
 
 
@@ -87,7 +87,7 @@ def process_appointment_view(request, pk):
     appointment = get_object_or_404(Appointment, pk=pk, doctor=request.user)
     
     if appointment.status != 'PENDING':
-        messages.warning(request, "Cette demande a déjà été traitée.")
+        messages.warning(request, "This request has already been processed.")
         return redirect('users:doctor_dashboard')
 
     context = {
@@ -104,9 +104,9 @@ def confirm_appointment_action(request, pk):
     if appointment.status == 'PENDING':
         appointment.status = 'CONFIRMED'
         appointment.save()
-        messages.success(request, f"Le rendez-vous avec {appointment.patient.get_full_name()} a été confirmé.")
+        messages.success(request, f"The appointment with {appointment.patient.get_full_name()} has been confirmed.")
     else:
-        messages.error(request, "L'action n'a pas pu être effectuée (le statut n'est plus 'En attente').")
+        messages.error(request, "The action could not be performed (status is no longer 'Pending').")
         
     return redirect('users:doctor_dashboard')
 
@@ -119,8 +119,8 @@ def refuse_appointment_action(request, pk):
     if appointment.status == 'PENDING':
         appointment.status = 'CANCELED' 
         appointment.save()
-        messages.info(request, f"La demande de {appointment.patient.get_full_name()} a été refusée.")
+        messages.info(request, f"The request for {appointment.patient.get_full_name()} was denied.")
     else:
-        messages.error(request, "L'action n'a pas pu être effectuée.")
+        messages.error(request, "The action could not be performed.")
         
     return redirect('users:doctor_dashboard')

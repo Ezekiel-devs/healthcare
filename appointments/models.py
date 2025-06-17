@@ -10,8 +10,8 @@ class Appointment(models.Model):
     )
     patient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='patient_appointments', limit_choices_to={'role': 'PATIENT'})
     doctor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='doctor_appointments', limit_choices_to={'role': 'DOCTOR'})
-    appointment_date = models.DateTimeField(verbose_name="Date et heure du rendez-vous")
-    reason = models.TextField(verbose_name="Motif")
+    appointment_date = models.DateTimeField(verbose_name="Date and time of the appointment")
+    reason = models.TextField(verbose_name="Pattern")
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -5,7 +5,7 @@ app_name = 'appointments'
 
 urlpatterns = [
     # Create rdv
-    path('nouveau/', views.create_appointment_view, name='create'),
+    path('new/', views.create_appointment_view, name='create'),
     # Update rdv
     path('<int:pk>/update/', views.update_appointment_view, name='update'),
     path('<int:pk>/delete/', views.delete_appointment_view, name='delete'),
