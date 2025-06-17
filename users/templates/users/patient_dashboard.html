@@ -4,51 +4,51 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0">Bonjour, {{ user.first_name|default:user.username }} !</h1>
-    <a href="{% url 'users:profile_update' %}" class="btn btn-outline-secondary"><i class="bi bi-pencil-square me-2"></i>Modifier mon profil</a>
+    <h1 class="mb-0">Hello, {{ user.first_name|default:user.username }}!</h1>
+    <a href="{% url 'users:profile_update' %}" class="btn btn-outline-secondary"><i class="bi bi-pencil-square me-2"></i>Edit My Profile</a>
 </div>
-<p class="text-muted">Bienvenue sur votre espace santé personnel. Retrouvez ici vos rendez-vous, ordonnances et informations médicales.</p>
+<p class="text-muted">Welcome to your personal health space. Find your appointments, prescriptions, and medical information here.</p>
 
 <hr class="my-4">
 
 <div class="row g-4">
-    <!-- Colonne de gauche : Rendez-vous et Historique -->
+    <!-- Left Column: Appointments and History -->
     <div class="col-lg-7">
-        <!-- Carte des rendez-vous à venir  -->
+        <!-- Upcoming Appointments Card -->
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-calendar-check-fill me-2"></i>Mes prochains rendez-vous
-                    <span class="badge bg-primary ms-1 align:">{{ upcoming_appointments.count }}</span>
+                <h5 class="mb-0"><i class="bi bi-calendar-check-fill me-2"></i>My Upcoming Appointments
+                    <span class="badge bg-primary ms-1 align-items-center">{{ upcoming_appointments.count }}</span>
                 </h5>
             </div>
             <div class="list-group list-group-flush">
-                {% for rdv in   upcoming_appointments %}
+                {% for rdv in upcoming_appointments %}
                     <div class="list-group-item">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">Dr. {{ rdv.doctor.get_full_name }}</h6>
-                            <small class="text-muted">{{ rdv.appointment_date|date:"d M Y" }}</small>
+                            <small class="text-muted">{{ rdv.appointment_date|date:"M d, Y" }}</small>
                         </div>
-                        <p class="mb-1"><strong>Heure :</strong> {{ rdv.appointment_date|date:"H:i" }}</p>
-                        <p class="mb-1"><strong>Motif :</strong> {{ rdv.reason|truncatewords:15 }}</p>
+                        <p class="mb-1"><strong>Time:</strong> {{ rdv.appointment_date|date:"H:i" }}</p>
+                        <p class="mb-1"><strong>Reason:</strong> {{ rdv.reason|truncatewords:15 }}</p>
                         <div class="d-flex justify-content-between align-items-center mt-2">
                         <small>
                             {% if rdv.status == 'CONFIRMED' %}
-                                <span class="badge bg-success">Confirmé</span>
+                                <span class="badge bg-success">Confirmed</span>
                             {% elif rdv.status == 'PENDING' %}
-                                <span class="badge bg-warning text-dark">En attente</span>
+                                <span class="badge bg-warning text-dark">Pending</span>
                             {% endif %}
                         </small>
 
                         <div>
                             {% if rdv.status == 'PENDING' %}
-                                <a href="{% url 'appointments:update' pk=rdv.pk %}" class="btn btn-sm btn-outline-primary me-2">Modifier</a>
-                                <form action="{% url 'appointments:delete' pk=rdv.pk %}" method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?');">
+                                <a href="{% url 'appointments:update' pk=rdv.pk %}" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                                <form action="{% url 'appointments:delete' pk=rdv.pk %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Annuler</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
                                 </form>
 
                             {% elif rdv.status == 'CONFIRMED' %}
-                                <span class="text-muted fst-italic">Action verrouillée</span>
+                                <span class="text-muted fst-italic">Action Locked</span>
                             {% endif %}
                         </div>
 
@@ -56,33 +56,33 @@
                     </div>
                 {% empty %}
                     <div class="list-group-item text-center p-4">
-                        <p class="text-muted mb-0">Vous n'avez aucun rendez-vous programmé.</p>
+                        <p class="text-muted mb-0">You have no scheduled appointments.</p>
                     </div>
                 {% endfor %}
             </div>
             <div class="card-footer text-center">
-                <a href="{% url 'appointments:create' %}" class="btn btn-primary">Prendre un nouveau rendez-vous</a>
+                <a href="{% url 'appointments:create' %}" class="btn btn-primary">Book a New Appointment</a>
             </div>
         </div>
 
         
-        <!--Historique des consultations     -->
+        <!-- Consultation History -->
         <div class="card shadow-sm mt-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Historique des consultations</h5>
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Consultation History</h5>
             </div>
             <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
                 {% for rdv in past_appointments %}
                     <a href="#" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">Dr. {{ rdv.doctor.get_full_name }}</h6>
-                            <small class="text-muted">{{ rdv.appointment_date|date:"d M Y" }}</small>
+                            <small class="text-muted">{{ rdv.appointment_date|date:"M d, Y" }}</small>
                         </div>
-                        <p class="mb-1 text-muted">Motif : {{ rdv.reason|truncatewords:15 }}</p>
+                        <p class="mb-1 text-muted">Reason: {{ rdv.reason|truncatewords:15 }}</p>
                     </a>
                 {% empty %}
                      <div class="list-group-item text-center p-3">
-                        <p class="text-muted mb-0">Aucun historique de consultation.</p>
+                        <p class="text-muted mb-0">No consultation history.</p>
                     </div>
                 {% endfor %}
             </div>
@@ -91,30 +91,30 @@
     </div>
 
     <div class="col-lg-5">
-        <!-- Carte des Ordonnances -->
+        <!-- Prescriptions Card -->
         <div class="card shadow-sm mb-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-file-medical-fill me-2"></i>Mes Ordonnances Récentes</h5>
+                <h5 class="mb-0"><i class="bi bi-file-medical-fill me-2"></i>My Recent Prescriptions</h5>
             </div>
             <div class="list-group list-group-flush">
-                {% for pres in prescriptions|slice:":5" %} {# Affiche les 5 plus récentes #}
+                {% for pres in prescriptions|slice:":5" %} {# Shows the 5 most recent #}
                     <a href="#" class="list-group-item list-group-item-action">
                         <strong>{{ pres.medication_name }}</strong> - Dr. {{ pres.doctor.last_name }}
                         <br>
-                        <small class="text-muted">Prescrit le {{ pres.created_at|date:"d/m/Y" }}</small>
+                        <small class="text-muted">Prescribed on {{ pres.created_at|date:"Y-m-d" }}</small>
                     </a>
                 {% empty %}
                     <div class="list-group-item">
-                        <p class="text-muted mb-0">Aucune ordonnance trouvée.</p>
+                        <p class="text-muted mb-0">No prescriptions found.</p>
                     </div>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- Résultats d'Analyses  -->
+        <!-- Lab Results -->
         <div class="card shadow-sm mt-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-file-earmark-medical-fill me-2"></i>Mes Résultats d'Analyses</h5>
+                <h5 class="mb-0"><i class="bi bi-file-earmark-medical-fill me-2"></i>My Lab Results</h5>
             </div>
             <div class="list-group list-group-flush">
                 {% for result in lab_results %}
@@ -122,26 +122,26 @@
                         <span>
                             <i class="bi bi-file-pdf me-2"></i> {{ result.title }}
                         </span>
-                        <small class="text-muted">{{ result.result_date|date:"d/m/Y" }}</small>
+                        <small class="text-muted">{{ result.result_date|date:"Y-m-d" }}</small>
                     </a>
                 {% empty %}
                     <div class="list-group-item">
-                        <p class="text-muted mb-0">Aucun résultat d'analyse trouvé.</p>
+                        <p class="text-muted mb-0">No lab results found.</p>
                     </div>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- Carte du Dossier Médical -->
+        <!-- Medical Record Card -->
         <div class="card shadow-sm  mt-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-person-vcard-fill me-2"></i>Mon Dossier Médical</h5>
+                <h5 class="mb-0"><i class="bi bi-person-vcard-fill me-2"></i>My Medical Record</h5>
             </div>
             <div class="card-body">
-                <h6>Antécédents</h6>
-                <p class="text-muted">{{ medical_record.medical_history|linebreaksbr|default:"Aucun antécédent renseigné." }}</p>
+                <h6>Medical History</h6>
+                <p class="text-muted">{{ medical_record.medical_history|linebreaksbr|default:"No medical history provided." }}</p>
                 <h6>Allergies</h6>
-                <p class="text-muted">{{ medical_record.allergies|linebreaksbr|default:"Aucune allergie renseignée." }}</p>
+                <p class="text-muted">{{ medical_record.allergies|linebreaksbr|default:"No allergies listed." }}</p>
             </div>
         </div>
     </div>

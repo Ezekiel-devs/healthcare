@@ -13,7 +13,7 @@
             <div class="card-body">
                 <div class="text-center mb-4">
                     {% if user.profile_picture %}
-                        <img src="{{ user.profile_picture.url }}" alt="Photo de profil de {{ user.get_full_name }}" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="{{ user.profile_picture.url }}" alt="Profile picture of {{ user.get_full_name }}" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                     {% else %}
                         <i class="bi bi-person-circle" style="font-size: 150px; color: #ccc;"></i>
                     {% endif %}
@@ -23,8 +23,8 @@
                     {% csrf_token %}
                     {{ form|crispy }}
                     <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
-                        <a href="{% url 'users:patient_dashboard' %}" class="btn btn-outline-secondary">Retour au tableau de bord</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="{% url 'users:patient_dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
                     </div>
                 </form>
             </div>

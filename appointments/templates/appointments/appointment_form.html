@@ -11,13 +11,13 @@
                 <h4 class="mb-0">{{ page_title }}</h4>
             </div>
             <div class="card-body">
-                <p class="text-muted">Remplissez le formulaire ci-dessous pour soumettre votre demande de rendez-vous.</p>
+                <p class="text-muted">Fill out the form below to submit your appointment request.</p>
                 <form method="post">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">Envoyer la demande</button>
-                        <a href="{% url 'users:patient_dashboard' %}" class="btn btn-outline-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-primary btn-lg">Send Request</button>
+                        <a href="{% url 'users:patient_dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
                     </div>
                 </form>
             </div>

@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Traiter la demande de rendez-vous{% endblock %}
+{% block title %}Process Appointment Request{% endblock %}
 
 {% block content %}
 <div class="card shadow-sm">
     <div class="card-header bg-warning">
-        <h4 class="mb-0">Demande de Rendez-vous</h4>
+        <h4 class="mb-0">Appointment Request</h4>
     </div>
     <div class="card-body">
-        <h5 class="card-title">Patient : <a href="{% url 'users:patient_profile' pk=appointment.patient.pk %}">{{ appointment.patient.get_full_name }}</a></h5>
-        <p><strong>Date et heure demandées :</strong> {{ appointment.appointment_date|date:"l d F Y à H:i" }}</p>
+        <h5 class="card-title">Patient: <a href="{% url 'users:patient_profile' pk=appointment.patient.pk %}">{{ appointment.patient.get_full_name }}</a></h5>
+        <p><strong>Requested Date & Time:</strong> {{ appointment.appointment_date|date:"l, F d, Y \a\t H:i" }}</p>
         
         <hr>
 
-        <h6>Motif de la consultation :</h6>
+        <h6>Reason for consultation:</h6>
         <div class="p-3 bg-light rounded border">
             <p class="mb-0">{{ appointment.reason|linebreaksbr }}</p>
         </div>
@@ -21,24 +21,24 @@
         <hr>
 
         <div class="d-flex justify-content-center gap-3 mt-4">
-            <!-- Formulaire de confirmation -->
+            <!-- Confirmation Form -->
             <form action="{% url 'appointments:confirm_action' pk=appointment.pk %}" method="post" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-lg btn-success">
-                    <i class="bi bi-check-circle-fill me-2"></i>Confirmer le rendez-vous
+                    <i class="bi bi-check-circle-fill me-2"></i>Confirm Appointment
                 </button>
             </form>
 
-            <!-- Formulaire de refus -->
+            <!-- Refusal Form -->
             <form action="{% url 'appointments:refuse_action' pk=appointment.pk %}" method="post" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-lg btn-danger">
-                    <i class="bi bi-x-circle-fill me-2"></i>Refuser la demande
+                    <i class="bi bi-x-circle-fill me-2"></i>Decline Request
                 </button>
             </form>
         </div>
         <div class="text-center mt-3">
-             <a href="{% url 'users:doctor_dashboard' %}" class="btn btn-link">Retour au tableau de bord</a>
+             <a href="{% url 'users:doctor_dashboard' %}" class="btn btn-link">Back to Dashboard</a>
         </div>
     </div>
 </div>

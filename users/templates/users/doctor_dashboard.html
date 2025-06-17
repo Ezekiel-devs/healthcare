@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Tableau de Bord Médecin{% endblock %}
+{% block title %}Doctor Dashboard{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Dr. {{ user.last_name }}, bienvenue.</h1>
+<h1 class="mb-4">Welcome, Dr. {{ user.last_name }}.</h1>
 
 <div class="row g-4">
      <div class="col-lg-8">
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-warning">
-                <h5 class="mb-0"><i class="bi bi-bell-fill me-2"></i>Demandes en attente ({{ pending_appointments|length }})</h5>
+                <h5 class="mb-0"><i class="bi bi-bell-fill me-2"></i>Pending Requests ({{ pending_appointments|length }})</h5>
             </div>
             <div class="list-group list-group-flush">
                 {% for rdv in pending_appointments %}
@@ -18,20 +18,20 @@
                             <div>
                                 <h6 class="mb-1">{{ rdv.patient.get_full_name }}</h6>
                                 <p class="mb-1 text-muted">
-                                    Demande pour le : <strong>{{ rdv.appointment_date|date:"d M Y à H:i" }}</strong>
+                                    Request for: <strong>{{ rdv.appointment_date|date:"M d, Y, P" }}</strong>
                                 </p>
                                 <p class="mb-1 text-muted">
-                                    Motif : {{ rdv.reason|truncatewords:10 }}
+                                    Reason: {{ rdv.reason|truncatewords:10 }}
                                 </p>
                             </div>
                             <div class="align-self-center">
-                                <span class="badge bg-primary">Voir détails</span>
+                                <span class="badge bg-primary">View Details</span>
                             </div>
                         </div>
                     </a>
                 {% empty %}
                     <div class="list-group-item text-center p-3">
-                        <p class="text-muted mb-0">Aucune nouvelle demande de rendez-vous.</p>
+                        <p class="text-muted mb-0">No new appointment requests.</p>
                     </div>
                 {% endfor %}
             </div>
@@ -39,7 +39,7 @@
 
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-clock-fill me-2"></i>Rendez-vous confirmés du jour ({{ today_appointments|length }})</h5>
+                <h5 class="mb-0"><i class="bi bi-clock-fill me-2"></i>Today's Confirmed Appointments ({{ today_appointments|length }})</h5>
             </div>
             <div class="list-group list-group-flush">
                 {% for rdv in today_appointments %}
@@ -52,26 +52,26 @@
                     </a>
                 {% empty %}
                     <div class="list-group-item text-center p-4">
-                        <p class="text-muted mb-0">Aucun rendez-vous confirmé pour aujourd'hui.</p>
+                        <p class="text-muted mb-0">No confirmed appointments for today.</p>
                     </div>
                 {% endfor %}
             </div>
             <div class="card-footer">
-                <a href="{% url 'users:doctor_schedule' %}" class="btn btn-secondary">Voir le planning complet</a>
+                <a href="{% url 'users:doctor_schedule' %}" class="btn btn-secondary">View Full Schedule</a>
             </div>
         </div>
     </div>
 
-    <!-- Section Accès rapide aux patients -->
+    <!-- Patients Quick Access Section -->
     <div class="col-lg-4">
         <div class="card shadow-sm">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Mes Patients</h5>
+                <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>My Patients</h5>
             </div>
             <div class="card-body">
                 <form method="GET" action="{% url 'users:doctor_dashboard' %}"> 
                     <div class="input-group">
-                        <input type="text" class="form-control" name="q" placeholder="Rechercher un patient..." value="{{ search_query }}">
+                        <input type="text" class="form-control" name="q" placeholder="Search for a patient..." value="{{ search_query }}">
                         <button class="btn btn-outline-secondary" type="submit">
                             <i class="bi bi-search"></i>
                         </button>
@@ -88,9 +88,9 @@
                 {% empty %}
                     <li class="list-group-item text-muted">
                         {% if search_query %}
-                            Aucun patient ne correspond à votre recherche.
+                            No patients match your search.
                         {% else %}
-                            Vous n'avez pas encore de patients assignés.
+                            You don't have any assigned patients yet.
                         {% endif %}
                     </li>
                 {% endfor %}

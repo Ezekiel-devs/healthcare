@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}Mon Planning{% endblock %}
+{% block title %}My Schedule{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0">Mon Planning Complet</h1>
-    <a href="{% url 'users:doctor_dashboard' %}" class="btn btn-outline-secondary">Retour au tableau de bord</a>
+    <h1 class="mb-0">My Full Schedule</h1>
+    <a href="{% url 'users:doctor_dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
 </div>
 
 {% if appointments_by_day %}
@@ -13,7 +13,7 @@
     {% for day, appointments_in_day in appointments_by_day.items %}
         <div class="card shadow-sm mb-4">
             <div class="card-header">
-                <h5 class="mb-0">{{ day|date:"l j F Y" }}</h5>
+                <h5 class="mb-0">{{ day|date:"l, F j, Y" }}</h5>
             </div>
             <div class="list-group list-group-flush">
                 
@@ -40,7 +40,7 @@
 {% else %}
     <div class="card">
         <div class="card-body text-center">
-            <p class="lead text-muted">Vous n'avez aucun rendez-vous confirmé à venir.</p>
+            <p class="lead text-muted">You have no upcoming confirmed appointments.</p>
         </div>
     </div>
 {% endif %}

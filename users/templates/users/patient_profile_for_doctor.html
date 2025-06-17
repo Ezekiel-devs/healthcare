@@ -1,77 +1,77 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Profil de {{ patient.get_full_name }}{% endblock %}
+{% block title %}Profile for {{ patient.get_full_name }}{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Dossier Patient : {{ patient.get_full_name }}</h1>
+<h1 class="mb-4">Patient Record: {{ patient.get_full_name }}</h1>
 
 <div class="row g-4">
     <div class="col-md-5">
-        <!-- Mise à jour du Dossier Médical -->
+        <!-- Update Medical Record -->
         <div class="card mb-4">
-            <div class="card-header">Mettre à Jour le Dossier Médical</div>
+            <div class="card-header">Update Medical Record</div>
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
                     {{ record_form|crispy }}
-                    <button type="submit" name="update_record" class="btn btn-primary mt-3 w-100">Enregistrer les modifications</button>
+                    <button type="submit" name="update_record" class="btn btn-primary mt-3 w-100">Save Changes</button>
                 </form>
             </div>
         </div>
 
-        <!-- Ajouter une Ordonnance -->
+        <!-- Add a Prescription -->
         <div class="card mb-4">
-            <div class="card-header">Ajouter une Ordonnance</div>
+            <div class="card-header">Add a Prescription</div>
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
                     {{ prescription_form|crispy }}
-                    <button type="submit" name="add_prescription" class="btn btn-info mt-3 w-100">Ajouter l'ordonnance</button>
+                    <button type="submit" name="add_prescription" class="btn btn-info mt-3 w-100">Add Prescription</button>
                 </form>
             </div>
         </div>
 
-        <!-- Ajouter un Résultat d'Analyse -->
+        <!-- Add a Lab Result -->
         <div class="card">
-            <div class="card-header">Ajouter un Résultat d'Analyse</div>
+            <div class="card-header">Add a Lab Result</div>
             <div class="card-body">
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ lab_result_form|crispy }}
-                    <button type="submit" name="add_lab_result" class="btn btn-info mt-3 w-100">Ajouter le résultat</button>
+                    <button type="submit" name="add_lab_result" class="btn btn-info mt-3 w-100">Add Result</button>
                 </form>
             </div>
         </div>
     </div>
 
     <div class="col-md-7">
-        <!-- Ordonnances existantes -->
+        <!-- Existing Prescriptions -->
         <div class="card mb-4">
-             <div class="card-header">Historique des Ordonnances</div>
+             <div class="card-header">Prescription History</div>
              <ul class="list-group list-group-flush">
                 {% for pres in prescriptions %}
-                    <li class="list-group-item">{{ pres.medication_name }} ({{ pres.dosage }}) - {{ pres.created_at|date:"d M Y" }}</li>
+                    <li class="list-group-item">{{ pres.medication_name }} ({{ pres.dosage }}) - {{ pres.created_at|date:"M d, Y" }}</li>
                 {% empty %}
-                    <li class="list-group-item text-muted">Aucune ordonnance.</li>
+                    <li class="list-group-item text-muted">No prescriptions.</li>
                 {% endfor %}
              </ul>
         </div>
 
-        <!-- Résultats d'analyses existants -->
+        <!-- Existing Lab Results -->
         <div class="card">
-             <div class="card-header">Historique des Résultats d'Analyses</div>
+             <div class="card-header">Lab Result History</div>
              <ul class="list-group list-group-flush">
                 {% for result in lab_results %}
                     <li class="list-group-item">
-                        <a href="{{ result.attachment.url }}" target="_blank">{{ result.title }}</a> - {{ result.result_date|date:"d M Y" }}
+                        <a href="{{ result.attachment.url }}" target="_blank">{{ result.title }}</a> - {{ result.result_date|date:"M d, Y" }}
                     </li>
                 {% empty %}
-                    <li class="list-group-item text-muted">Aucun résultat d'analyse.</li>
+                    <li class="list-group-item text-muted">No lab results.</li>
                 {% endfor %}
              </ul>
         </div>
     </div>
 </div>
-<a href="{% url 'users:doctor_dashboard' %}" class="btn btn-secondary mt-4">Retour au tableau de bord</a>
+<a href="{% url 'users:doctor_dashboard' %}" class="btn btn-secondary mt-4">Back to Dashboard</a>
 {% endblock %}
